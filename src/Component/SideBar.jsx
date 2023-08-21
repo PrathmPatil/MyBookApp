@@ -12,14 +12,15 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDownOutlined';
 import ArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUpOutlined';
-import { Grid } from '@mui/material';
+import { Grid, Tooltip } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-
 import GitaAppBar from './AppBar';
 import DataCard from './DataCard';
+import Numbers from './Numbers';
+import Advertise from './Advertise';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 export default function SideBar() {
 
@@ -45,6 +46,16 @@ export default function SideBar() {
     // }
     console.log("selectedData");
     console.log(selectedData);
+
+    const [isHovered, setIsHovered] = React.useState(false);
+
+    const handleMouseEnter = () => {
+        setIsHovered(true);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+    };
     return (
         <Box sx={{ display: 'flex', }}>
             <CssBaseline />
@@ -54,7 +65,7 @@ export default function SideBar() {
             <Drawer
                 variant="permanent"
                 sx={{
-                    width: drawerWidth,
+                    width: isSmScreen ? drawerWidth : 0,
                     flexShrink: 0,
                     [`& .MuiDrawer-paper`]: {
                         width: isSmScreen ? drawerWidth : (isXsScreen && menuIcon ? '100vw' : '0')
@@ -63,33 +74,51 @@ export default function SideBar() {
                 }}
             >
                 <Toolbar />
-                <Box sx={{ overflow: 'auto', border: '2px solid red', '::-webkit-scrollbar': { display: 'none' } }}>
-                    <List sx={{ overflow: 'hidden', }}>
+                <Box sx={{ overflow: 'auto', '::-webkit-scrollbar': { display: 'none' } }}>
+                    <List sx={{ overflow: 'hidden',border:'2px solid red',paddingX:isXsScreen ? 1 : 0,   }}>
                         {Array.isArray(product) && product.map((items) => (
-                            <ListItem disablePadding sx={{ bgcolor: '#fff9c4', marginBottom: 1, borderRadius: 2, transition: 'background-color 0.3s ease', '&:hover': { bgcolor: '#ffe082' } }}>
-                                <ListItemButton component="button" onClick={() => { console.log(items); sideBarOpen(); setSelectedData(items) }}>
-                                    <ListItemText primary={items.title} />
-                                </ListItemButton>
-                            </ListItem>
+                            <div className='relative'>
+                                <Tooltip title={items.category} arrow placement="top" enterTouchDelay={0}
+                                    className='bg-yellow-600 color-white p-[8px] text-[12px] rounded-[4px]'>
+                                    <ListItem disablePadding sx={{ bgcolor: '#fff9c4', marginBottom: 1, borderRadius: 2, transition: 'background-color 0.3s ease', '&:hover': { bgcolor: '#ffe082' } }}
+                                        onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} >
+                                        <ListItemButton component="button" onClick={() => { console.log(items); sideBarOpen(); setSelectedData(items) }}>
+                                            <ListItemText primary={items.title} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                </Tooltip>
+                                {/* {isHovered && (
+                                    <div className='bg-#ffffff border-2px border-slate-200 p-[10px] absolute top-[100%] left-[0] block'>
+                                        hello
+                                    </div>
+                                )} */}
+                            </div>
                         ))}
                     </List>
                 </Box>
 
             </Drawer >
-            <Box component="main" sx={{ flexGrow: 1, p: 3, }}>
+            <Box sx={{ flexGrow: 1, p:2, display: 'flex', border: '2px solid black' }}>
                 <Grid >
                     <Toolbar />
                     {Array.isArray(selectedData.images) && selectedData.images.map((items) => (
-                            <Grid className='space-y-5'>
-                                <DataCard items={items} />
-                            </Grid>
+                        <Grid className='space-y-5'>
+                            <DataCard items={items} />
+                        </Grid>
 
-                        ))}
-
-
-                    <Typography paragraph>
-                        "id":2,"title":"iPhone X","description":"SIM-Free, Model A19211 6.5-inch Super Retina HD display with OLED technology A12 Bionic chip with ...","price":899,"discountPercentage":17.94,"rating":4.44,"stock":34,"brand":"Apple","category":"smartphones","thumbnail":"https://i.dummyjson.com/data/products/2/thumbnail.jpg","images":["https://i.dummyjson.com/data/products/2/1.jpg","https://i.dummyjson.com/data/products/2/2.jpg","https://i.dummyjson.com/data/products/2/3.jpg","https://i.dummyjson.com/data/products/2/thumbnail.jpg"]
+                    ))}
+                    <Typography sx={{ bgcolor: '#fff9c4', height: '40vh', width:isXsScreen ? '70vw' : '50vw',  marginLeft: isXsScreen ? 1 : 2, padding: 2, marginBottom: 2, borderRadius: 3, boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)', transition: 'background-color 0.3s ease', '&:hover': { bgcolor: '#ffe082', }, }}
+                    >
+                        hii
+                        {/* "id":2,"title":"iPhone X","description":"SIM-Free, Model A19211 6.5-inch Super Retina HD display with OLED technology A12 Bionic chip with ...","price":899,"discountPercentage":17.94,"rating":4.44,"stock":34,"brand":"Apple","category":"smartphones","thumbnail":"https://i.dummyjson.com/data/products/2/thumbnail.jpg","images":["https://i.dummyjson.com/data/products/2/1.jpg","https://i.dummyjson.com/data/products/2/2.jpg","https://i.dummyjson.com/data/products/2/3.jpg","https://i.dummyjson.com/data/products/2/thumbnail.jpg"] */}
                     </Typography>
+                </Grid>
+                <Grid>
+                    <Toolbar />
+                    <Grid>
+                        <Numbers product={product} />
+                    </Grid>
+                    <Advertise sx={{display:isXsScreen?'none':'block'}} />
                 </Grid>
             </Box>
         </Box >
